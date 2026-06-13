@@ -85,10 +85,12 @@ The project follows the main pipeline from the article:
 2. `vite-sw.js` stays as the stable service worker filename.
 3. `registerType: 'prompt'` prevents silent page reloads.
 4. `ClassSw` receives `onNeedRefresh` from `virtual:pwa-register`.
-5. `ClassSw` reads `build-info.txt` under the configured public base path and stores the detected new version.
+5. `ClassSw` reads `build-info.txt` under the configured public base path with a cache-busting request and stores the detected new version.
 6. `ProviderPWA` exposes the service worker state to React.
 7. The root layout either shows a manual action or calls `updateApp()` automatically.
 8. `updateSW(true)` activates the new service worker and reloads the page.
+
+`Automatic` mode does not poll for a new deployment while an already-open tab is idle. It only decides what to do after the browser detects a new service worker and `onNeedRefresh` fires. In this demo, detection usually happens after a reload, navigation, reopening the tab, or a browser-initiated service worker update check. If the product needs active tabs to discover updates on a schedule, add explicit polling, for example `registration.update()` or a `build-info.txt` version check.
 
 The only intentional difference is the API cache example. The article shows a `NetworkOnly` API rule for apps with a backend. This repository has no API layer, so `runtimeCaching` contains only `/build-info.txt`.
 
@@ -165,6 +167,8 @@ npx vite preview --outDir build
 10. In `Manual` mode, the `Update version` button should become enabled.
 11. Click `Update version`. The new service worker activates, the page reloads, and the UI should show `1.0.1`.
 12. In `Automatic` mode, the app calls `updateApp()` as soon as `onNeedRefresh` reports a new version.
+
+Leaving the old tab completely idle is not the expected trigger in this demo. `Automatic` mode auto-activates an update after `onNeedRefresh`; it does not create a background polling loop by itself.
 
 After `yarn build:prod`, the version file is generated here:
 
