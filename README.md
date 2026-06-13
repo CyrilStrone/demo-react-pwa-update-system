@@ -1,6 +1,6 @@
 # React PWA Update System Demo
 
-Demo project for the article: [How to build a React app update system from scratch](ARTICLE_URL_HERE).
+Demo project for the article: [React PWA Update System](ARTICLE_URL_HERE).
 
 This repository is not a reusable library or a generic app template. It demonstrates a small production-oriented React PWA update flow with `vite-plugin-pwa`, a custom `ClassSw`, React context, `build-info.txt`, a manual update action, an automatic update mode, and an emergency service worker cache reset.
 
