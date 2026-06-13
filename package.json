@@ -1,7 +1,7 @@
 {
   "name": "demo-react-pwa-update-system-from-scratch",
   "private": true,
-  "version": "1.0.0-prod.1",
+  "version": "1.1.0-prod.1",
   "type": "module",
   "scripts": {
     "biome:lint": "biome lint src",
