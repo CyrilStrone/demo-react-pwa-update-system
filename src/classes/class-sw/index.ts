@@ -251,21 +251,39 @@ export class ClassSw {
     });
   }
 
+  private async readBuildInfoVersion() {
+    const url = new URL(`${env.basePath}build-info.txt`, window.location.origin);
+    url.searchParams.set('sw-update', Date.now().toString());
+
+    const res = await fetch(url, {
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache',
+      },
+    });
+
+    if (!res.ok) return null;
+
+    const text = await res.text();
+    const versionLine = text
+      .split('\n')
+      .map((line) => line.trim())
+      .find((line) => line.startsWith('version:'));
+    const version = versionLine?.slice('version:'.length).trim() ?? null;
+
+    return version && version !== this.valueCurrentVersion ? version : null;
+  }
+
   private async handleNeedRefresh() {
     this.valueIsUpdateAvailable = true;
     this.valueStatus = 'update-available';
     this.notify();
 
     try {
-      // build-info.txt is expected to contain a plain `version:` line from CI/build pipeline.
-      const res = await fetch(`${env.basePath}build-info.txt`);
-      const text = await res.text();
-      const versionLine = text.split('\n').find((l) => l.startsWith('version:'));
-      const version = versionLine?.split(':')[1].trim() ?? 'unknown';
-      this.valueNewVersion = version;
+      this.valueNewVersion = await this.readBuildInfoVersion();
       this.valueIsNeedRefresh = true;
     } catch {
-      this.valueNewVersion = 'unknown';
+      this.valueNewVersion = null;
       this.valueIsNeedRefresh = true;
     }
 
