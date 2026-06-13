@@ -1,0 +1,145 @@
+import { generateManifestIcons, pluginUpdateIcons } from '@jenesei-software/jenesei-plugin-vite';
+import react from '@vitejs/plugin-react';
+import { defineConfig, loadEnv } from 'vite';
+import { createHtmlPlugin } from 'vite-plugin-html';
+import { VitePWA } from 'vite-plugin-pwa';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
+
+import path from 'node:path';
+import process from 'node:process';
+
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd());
+
+  const VITE_DEFAULT_NAME = env.VITE_DEFAULT_NAME;
+  const VITE_DEFAULT_NAME_SHORT = env.VITE_DEFAULT_NAME_SHORT;
+  const VITE_DEFAULT_THEME_COLOR = env.VITE_DEFAULT_THEME_COLOR;
+  const VITE_DEFAULT_DESCRIPTION = env.VITE_DEFAULT_DESCRIPTION;
+  const VITE_BASE_URL = env.VITE_BASE_URL;
+
+  const robotsMode = {
+    prod: {
+      txt: 'robots/robots.prod.txt',
+      meta: 'index, follow',
+    },
+    dev: {
+      txt: 'robots/robots.dev.txt',
+      meta: 'noindex, nofollow',
+    },
+    stage: {
+      txt: 'robots/robots.stage.txt',
+      meta: 'noindex, nofollow',
+    },
+  };
+  const robotsConfig = robotsMode[mode as keyof typeof robotsMode] ?? robotsMode.dev;
+
+  const sizesBackgroundTransparent = [57, 64, 72, 76, 114, 120, 144, 152, 180, 192, 256, 384, 512];
+  const sizesBackgroundWhite: never[] = [];
+  const sizesFavicon = [64];
+
+  return {
+    server: {
+      host: true,
+      port: env.VITE_PORT ? parseInt(env.VITE_PORT, 10) : 3000,
+    },
+    build: {
+      outDir: env.VITE_OUTPUT_DIR || 'build',
+    },
+    resolve: {
+      alias: {
+        '@local': path.resolve(__dirname, './src'),
+      },
+    },
+    plugins: [
+      pluginUpdateIcons({
+        pathInputFile: path.resolve(__dirname, 'public/logos/logo-jenesei-id.png'),
+        pathOutputDirectory: path.resolve(__dirname, 'public/icons'),
+        prefix: 'icon',
+        sizesBackgroundTransparent: sizesBackgroundTransparent,
+        sizesBackgroundWhite: sizesBackgroundWhite,
+        sizesFavicon: sizesFavicon,
+      }),
+      viteStaticCopy({
+        targets: [
+          {
+            src: robotsConfig.txt,
+            dest: '',
+            rename: 'robots.txt',
+          },
+        ],
+      }),
+      createHtmlPlugin({
+        minify: true,
+        entry: 'src/main.tsx',
+        template: 'index.html',
+        inject: {
+          data: {
+            title: VITE_DEFAULT_NAME_SHORT,
+            robotsMeta: robotsConfig.meta,
+            icon57: `/icons/icon-57x57.png`,
+            icon72: `/icons/icon-72x72.png`,
+            icon76: `/icons/icon-76x76.png`,
+            icon114: `/icons/icon-114x114.png`,
+            icon120: `/icons/icon-120x120.png`,
+            icon144: `/icons/icon-144x144.png`,
+            icon152: `/icons/icon-152x152.png`,
+            icon180: `/icons/icon-180x180.png`,
+
+            icon64Fav: `/icons/icon-64x64-favicon.ico`,
+          },
+        },
+      }),
+      react(),
+      VitePWA({
+        filename: 'vite-sw.js', //!!! НИКОГДА НЕ МЕНЯТЬ !!!
+        strategies: 'generateSW',
+        registerType: 'prompt',
+        includeManifestIcons: false,
+        injectRegister: null,
+        workbox: {
+          globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,json}'],
+          cleanupOutdatedCaches: true,
+          runtimeCaching: [
+            {
+              urlPattern: new RegExp(`^${VITE_BASE_URL}/.*$`),
+              handler: 'NetworkOnly',
+            },
+            {
+              urlPattern: /build-info\.txt$/,
+              handler: 'NetworkFirst',
+              options: {
+                cacheName: 'version-cache',
+                expiration: {
+                  maxEntries: 1,
+                  maxAgeSeconds: env.VITE_CACHE_VERSION_MAX_AGE_SECONDS
+                    ? parseInt(env.VITE_CACHE_VERSION_MAX_AGE_SECONDS, 10)
+                    : 60 * 60 * 24,
+                },
+              },
+            },
+          ],
+        },
+        devOptions: {
+          enabled: false,
+        },
+        manifest: {
+          display: 'standalone',
+          orientation: 'portrait',
+          name: VITE_DEFAULT_NAME,
+          short_name: VITE_DEFAULT_NAME_SHORT,
+          theme_color: VITE_DEFAULT_THEME_COLOR,
+          background_color: VITE_DEFAULT_THEME_COLOR,
+          description: VITE_DEFAULT_DESCRIPTION,
+          start_url: '/',
+          icons: generateManifestIcons({
+            path: 'icons',
+            prefix: 'icon',
+            sizesBackgroundWhite: [],
+            sizesBackgroundTransparent: sizesBackgroundTransparent,
+            sizesFavicon: sizesFavicon,
+          }),
+        },
+      }),
+    ],
+  };
+});

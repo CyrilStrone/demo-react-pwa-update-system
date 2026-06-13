@@ -1,0 +1,49 @@
+{
+  "name": "jenesei-template-project-react",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "biome:lint": "biome lint src",
+    "biome:lint:check": "biome lint src --no-fix",
+    "biome:format": "biome format --write src",
+    "biome:format:check": "biome format src",
+    "changelog": "conventional-changelog -p eslint -i CHANGELOG.md -s -r 0",
+    "bundle-visualizer": "npx vite-bundle-visualizer",
+    "start": "vite --mode dev",
+    "start:stage": "vite --mode stage",
+    "start:prod": "vite --mode prod",
+    "start:dev": "vite --mode dev",
+    "build:stage": "tsc && vite build --mode stage",
+    "build:prod": "tsc && vite build --mode prod",
+    "build:dev": "tsc && vite build --mode dev"
+  },
+  "dependencies": {
+    "@fontsource/inter": "^5.2.8",
+    "@jenesei-software/jenesei-kit-react": "^2.2.1",
+    "@jenesei-software/jenesei-plugin-vite": "^2.5.0",
+    "@tanstack/react-router": "^1.120.5",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "use-context-selector": "^2.0.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.12",
+    "@jenesei-software/jenesei-kit-react": "^2.2.1",
+    "@jenesei-software/jenesei-plugin-vite": "^2.5.0",
+    "@tanstack/react-router-devtools": "^1.166.13",
+    "@types/node": "^22.8.2",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^6.0.1",
+    "autoprefixer": "^10.4.27",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.0",
+    "vite-plugin-bundle-analyzer": "^0.0.1",
+    "vite-plugin-html": "^3.2.2",
+    "vite-plugin-pwa": "^1.3.0",
+    "vite-plugin-static-copy": "^4.1.0"
+  }
+}
