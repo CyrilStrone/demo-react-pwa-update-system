@@ -70,6 +70,7 @@ The project uses only the variables needed for the article demo:
 | `VITE_DEFAULT_THEME_COLOR` | Theme and background color in the PWA manifest. |
 | `VITE_NODE_ENV` | Runtime mode: `dev`, `stage`, or `prod`. |
 | `VITE_CACHE_VERSION_MAX_AGE_SECONDS` | Runtime cache TTL for `/build-info.txt`. |
+| `VITE_BASE_PATH` | Public base path for static assets. Use `/demo-react-pwa-update-system/` for this GitHub Pages project. |
 | `VITE_PORT` | Local Vite dev server port. |
 | `VITE_OUTPUT_DIR` | Build output directory, defaults to `build`. |
 | `VITE_APP_VERSION` | Current build version shown in the UI and written to `build-info.txt`. |
@@ -138,7 +139,7 @@ yarn build:prod
 npx vite preview --outDir build
 ```
 
-3. Open the URL printed by `vite preview`, usually `http://localhost:4173`.
+3. Open the URL printed by `vite preview` with the configured base path, usually `http://localhost:4173/demo-react-pwa-update-system/` for a production build.
 4. Confirm that the UI shows version `1.0.0`.
 5. Confirm that the service worker is registered:
 
@@ -174,7 +175,7 @@ build/build-info.txt
 It should be available at:
 
 ```text
-http://localhost:4173/build-info.txt
+http://localhost:4173/demo-react-pwa-update-system/build-info.txt
 ```
 
 In Cache Storage, you can inspect the Workbox precache and the `version-cache` runtime cache after `/build-info.txt` has been requested.
@@ -183,6 +184,7 @@ In Cache Storage, you can inspect the Workbox precache and the `version-cache` r
 
 - Make sure the app is opened from `vite preview`, not `yarn start`.
 - Make sure `.env.prod` contains `VITE_NODE_ENV=prod`.
+- Make sure `VITE_BASE_PATH` matches the deployment path. For this GitHub Pages URL, it must be `/demo-react-pwa-update-system/`.
 - Make sure the tab is not using hard refresh with cache disabled.
 - Open `Application -> Service workers` and check that the page has a controller.
 - Open `/build-info.txt` and confirm that it contains the new version.
