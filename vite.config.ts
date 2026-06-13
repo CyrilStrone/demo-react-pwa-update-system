@@ -17,6 +17,8 @@ export default defineConfig(({ mode }) => {
   const VITE_DEFAULT_DESCRIPTION = env.VITE_DEFAULT_DESCRIPTION;
   const VITE_OUTPUT_DIR = env.VITE_OUTPUT_DIR || 'build';
   const VITE_APP_VERSION = env.VITE_APP_VERSION || 'unknown';
+  const VITE_BASE_PATH = env.VITE_BASE_PATH || '/';
+  const publicBasePath = VITE_BASE_PATH.endsWith('/') ? VITE_BASE_PATH : `${VITE_BASE_PATH}/`;
 
   const robotsMode = {
     prod: {
@@ -40,6 +42,7 @@ export default defineConfig(({ mode }) => {
   const buildInfoPath = path.resolve(__dirname, VITE_OUTPUT_DIR, 'build-info.txt');
 
   return {
+    base: publicBasePath,
     server: {
       host: true,
       port: env.VITE_PORT ? parseInt(env.VITE_PORT, 10) : 3000,
@@ -78,16 +81,16 @@ export default defineConfig(({ mode }) => {
           data: {
             title: VITE_DEFAULT_NAME_SHORT,
             robotsMeta: robotsConfig.meta,
-            icon57: `/icons/icon-57x57.png`,
-            icon72: `/icons/icon-72x72.png`,
-            icon76: `/icons/icon-76x76.png`,
-            icon114: `/icons/icon-114x114.png`,
-            icon120: `/icons/icon-120x120.png`,
-            icon144: `/icons/icon-144x144.png`,
-            icon152: `/icons/icon-152x152.png`,
-            icon180: `/icons/icon-180x180.png`,
+            icon57: `${publicBasePath}icons/icon-57x57.png`,
+            icon72: `${publicBasePath}icons/icon-72x72.png`,
+            icon76: `${publicBasePath}icons/icon-76x76.png`,
+            icon114: `${publicBasePath}icons/icon-114x114.png`,
+            icon120: `${publicBasePath}icons/icon-120x120.png`,
+            icon144: `${publicBasePath}icons/icon-144x144.png`,
+            icon152: `${publicBasePath}icons/icon-152x152.png`,
+            icon180: `${publicBasePath}icons/icon-180x180.png`,
 
-            icon64Fav: `/icons/icon-64x64-favicon.ico`,
+            icon64Fav: `${publicBasePath}icons/icon-64x64-favicon.ico`,
           },
         },
       }),
@@ -128,7 +131,8 @@ export default defineConfig(({ mode }) => {
           theme_color: VITE_DEFAULT_THEME_COLOR,
           background_color: VITE_DEFAULT_THEME_COLOR,
           description: VITE_DEFAULT_DESCRIPTION,
-          start_url: '/',
+          scope: publicBasePath,
+          start_url: publicBasePath,
           icons: generateManifestIcons({
             path: 'icons',
             prefix: 'icon',
