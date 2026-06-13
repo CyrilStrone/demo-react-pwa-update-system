@@ -1,3 +1,4 @@
+import { env } from '@local/core/envs';
 import { LayoutErrorRouter } from '@local/layouts/layout-error';
 import { LayoutPrivate } from '@local/layouts/layout-private';
 import { LayoutPublic } from '@local/layouts/layout-public';
@@ -70,6 +71,7 @@ const routeTree = LayoutRouteRoot.addChildren({
 });
 
 export const router = createRouter({
+  basepath: env.basePath,
   routeTree: routeTree,
   context: {
     queryClient: undefined,

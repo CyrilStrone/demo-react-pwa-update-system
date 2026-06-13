@@ -1,3 +1,4 @@
+import { env } from '@local/core/envs';
 import { logger } from '@local/core/logger';
 
 import { registerSW } from 'virtual:pwa-register';
@@ -257,7 +258,7 @@ export class ClassSw {
 
     try {
       // build-info.txt is expected to contain a plain `version:` line from CI/build pipeline.
-      const res = await fetch(`${import.meta.env.BASE_URL}build-info.txt`);
+      const res = await fetch(`${env.basePath}build-info.txt`);
       const text = await res.text();
       const versionLine = text.split('\n').find((l) => l.startsWith('version:'));
       const version = versionLine?.split(':')[1].trim() ?? 'unknown';
