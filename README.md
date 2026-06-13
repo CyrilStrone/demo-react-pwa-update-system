@@ -70,7 +70,7 @@ The project uses only the variables needed for the article demo:
 | `VITE_DEFAULT_THEME_COLOR` | Theme and background color in the PWA manifest. |
 | `VITE_NODE_ENV` | Runtime mode: `dev`, `stage`, or `prod`. |
 | `VITE_CACHE_VERSION_MAX_AGE_SECONDS` | Runtime cache TTL for `/build-info.txt`. |
-| `VITE_BASE_PATH` | Public base path for static assets. Use `/demo-react-pwa-update-system/` for this GitHub Pages project. |
+| `VITE_BASE_PATH` | Public base path for Vite assets, TanStack Router, PWA scope, and update checks. Use `/demo-react-pwa-update-system/` for this GitHub Pages project. |
 | `VITE_PORT` | Local Vite dev server port. |
 | `VITE_OUTPUT_DIR` | Build output directory, defaults to `build`. |
 | `VITE_APP_VERSION` | Current build version shown in the UI and written to `build-info.txt`. |
@@ -85,7 +85,7 @@ The project follows the main pipeline from the article:
 2. `vite-sw.js` stays as the stable service worker filename.
 3. `registerType: 'prompt'` prevents silent page reloads.
 4. `ClassSw` receives `onNeedRefresh` from `virtual:pwa-register`.
-5. `ClassSw` reads `/build-info.txt` and stores the detected new version.
+5. `ClassSw` reads `build-info.txt` under the configured public base path and stores the detected new version.
 6. `ProviderPWA` exposes the service worker state to React.
 7. The root layout either shows a manual action or calls `updateApp()` automatically.
 8. `updateSW(true)` activates the new service worker and reloads the page.

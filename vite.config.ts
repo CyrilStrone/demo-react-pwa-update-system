@@ -8,7 +8,7 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 import path from 'node:path';
 import process from 'node:process';
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd());
 
   const VITE_DEFAULT_NAME = env.VITE_DEFAULT_NAME;
@@ -19,6 +19,7 @@ export default defineConfig(({ mode }) => {
   const VITE_APP_VERSION = env.VITE_APP_VERSION || 'unknown';
   const VITE_BASE_PATH = env.VITE_BASE_PATH || '/';
   const publicBasePath = VITE_BASE_PATH.endsWith('/') ? VITE_BASE_PATH : `${VITE_BASE_PATH}/`;
+  const htmlPublicBasePath = command === 'serve' ? '/' : publicBasePath;
 
   const robotsMode = {
     prod: {
@@ -81,16 +82,16 @@ export default defineConfig(({ mode }) => {
           data: {
             title: VITE_DEFAULT_NAME_SHORT,
             robotsMeta: robotsConfig.meta,
-            icon57: `${publicBasePath}icons/icon-57x57.png`,
-            icon72: `${publicBasePath}icons/icon-72x72.png`,
-            icon76: `${publicBasePath}icons/icon-76x76.png`,
-            icon114: `${publicBasePath}icons/icon-114x114.png`,
-            icon120: `${publicBasePath}icons/icon-120x120.png`,
-            icon144: `${publicBasePath}icons/icon-144x144.png`,
-            icon152: `${publicBasePath}icons/icon-152x152.png`,
-            icon180: `${publicBasePath}icons/icon-180x180.png`,
+            icon57: `${htmlPublicBasePath}icons/icon-57x57.png`,
+            icon72: `${htmlPublicBasePath}icons/icon-72x72.png`,
+            icon76: `${htmlPublicBasePath}icons/icon-76x76.png`,
+            icon114: `${htmlPublicBasePath}icons/icon-114x114.png`,
+            icon120: `${htmlPublicBasePath}icons/icon-120x120.png`,
+            icon144: `${htmlPublicBasePath}icons/icon-144x144.png`,
+            icon152: `${htmlPublicBasePath}icons/icon-152x152.png`,
+            icon180: `${htmlPublicBasePath}icons/icon-180x180.png`,
 
-            icon64Fav: `${publicBasePath}icons/icon-64x64-favicon.ico`,
+            icon64Fav: `${htmlPublicBasePath}icons/icon-64x64-favicon.ico`,
           },
         },
       }),

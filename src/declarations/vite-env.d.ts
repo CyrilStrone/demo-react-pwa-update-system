@@ -6,6 +6,7 @@ interface ImportMetaEnv {
   readonly VITE_DEFAULT_NAME: string;
   readonly VITE_DEFAULT_NAME_SHORT: string;
   readonly VITE_DEFAULT_THEME_COLOR: string;
+  readonly VITE_BASE_PATH: string;
   readonly VITE_APP_VERSION: string;
   readonly VITE_NODE_ENV: 'dev' | 'prod' | 'stage';
 }
