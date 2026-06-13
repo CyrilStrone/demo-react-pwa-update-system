@@ -10,12 +10,7 @@ const PWAContext = createContext<IPWAContext | null>(null);
 
 export const usePWA = (props: IUsePWADependencies): IPWAContext => {
   const context = useContextSelector(PWAContext, (v) => {
-    return v
-      ? props.reduce((acc, prop) => {
-          acc[prop] = v[prop];
-          return acc;
-        }, {} as any)
-      : null;
+    return v ? (Object.fromEntries(props.map((prop) => [prop, v[prop]])) as unknown as IPWAContext) : null;
   });
   if (!context) {
     throw new Error('usePWA must be used within an ProviderPWA');

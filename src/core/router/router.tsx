@@ -9,7 +9,11 @@ import { createRootRouteWithContext, createRoute, createRouter, Navigate, redire
 
 import { validateLayoutRouteRootSearch } from './router.search';
 
-export const LayoutRouteRoot = createRootRouteWithContext()({
+interface IRouterContext {
+  queryClient: unknown | undefined;
+}
+
+export const LayoutRouteRoot = createRootRouteWithContext<IRouterContext>()({
   component: LayoutRoot,
   validateSearch: validateLayoutRouteRootSearch,
   errorComponent: LayoutErrorRouter,
@@ -68,7 +72,7 @@ const routeTree = LayoutRouteRoot.addChildren({
 export const router = createRouter({
   routeTree: routeTree,
   context: {
-    queryClient: undefined!,
+    queryClient: undefined,
   },
   defaultPreload: 'intent',
   defaultPreloadStaleTime: 0,

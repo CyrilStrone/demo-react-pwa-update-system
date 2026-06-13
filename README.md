@@ -1,271 +1,203 @@
-# Jenesei Template for React Project
+# React PWA Update System Demo
 
-A production-ready React application template used as a starting point for Jenesei frontend projects.
+Demo project for the article: [How to build a React app update system from scratch](ARTICLE_URL_HERE).
 
-The template includes routing, data fetching, localization, PWA support, environment-based builds, app metadata injection, icon generation, robots.txt handling, and a strict formatting/linting setup.
+This repository is not a reusable library or a generic app template. It demonstrates a small production-oriented React PWA update flow with `vite-plugin-pwa`, a custom `ClassSw`, React context, `build-info.txt`, a manual update action, an automatic update mode, and an emergency service worker cache reset.
+
+## What Is Included
+
+- `vite-plugin-pwa` generates the service worker with the stable filename `vite-sw.js`.
+- Service worker registration goes through `ClassSw` instead of automatic HTML injection.
+- `ProviderPWA` mirrors service worker state into React.
+- The root layout shows the current version, update status, update button, cache reset button, and update mode selector.
+- The update mode is stored in `localStorage`: `Manual` or `Automatic`.
+- `pluginWriteBuildInfo` generates `build-info.txt` inside `build/` during Vite builds.
+- `/build-info.txt` uses the Workbox `NetworkFirst` runtime caching strategy.
+- API-specific env variables and API runtime caching are intentionally omitted because this demo has no backend API.
 
 ## Stack
 
 - React 19
-- Vite 8
 - TypeScript 6
+- Vite 8
 - TanStack Router
-- TanStack Query
-- TanStack Form
-- i18next and react-i18next
+- vite-plugin-pwa
 - Jenesei Kit React
-- Vite PWA
 - Biome
 - Yarn
 
-## Requirements
-
-- Node.js `22.18.0`
-- Yarn
-
-Use the Node version from `.nvmrc`:
-
-```bash
-nvm use
-```
-
-## Getting Started
-
-Install dependencies:
+## Install
 
 ```bash
 yarn install
 ```
 
-Start the local development server:
+Use the Node.js version from `.nvmrc`:
 
 ```bash
-yarn start
+nvm use
 ```
-
-By default, Vite starts on port `3000`. The port can be changed with `VITE_PORT`.
 
 ## Scripts
 
 | Command | Description |
 | --- | --- |
-| `yarn start` | Start Vite in `dev` mode. |
-| `yarn start:dev` | Start Vite in `dev` mode. |
-| `yarn start:stage` | Start Vite in `stage` mode. |
-| `yarn start:prod` | Start Vite in `prod` mode. |
-| `yarn build:dev` | Type-check and build in `dev` mode. |
-| `yarn build:stage` | Type-check and build in `stage` mode. |
-| `yarn build:prod` | Type-check and build in `prod` mode. |
-| `yarn biome:lint` | Run Biome lint. |
-| `yarn biome:lint:check` | Check lint rules without fixes. |
-| `yarn biome:format` | Format source files with Biome. |
-| `yarn biome:format:check` | Check formatting without writing changes. |
-| `yarn changelog` | Update `CHANGELOG.md` from conventional commits. |
-| `yarn bundle-visualizer` | Open the Vite bundle visualizer. |
+| `yarn start` | Starts Vite in `dev` mode. |
+| `yarn start:dev` | Starts Vite in `dev` mode. |
+| `yarn start:stage` | Starts Vite in `stage` mode. |
+| `yarn start:prod` | Starts Vite in `prod` mode. |
+| `yarn build:dev` | Type-checks and builds in `dev` mode. |
+| `yarn build:stage` | Type-checks and builds in `stage` mode. |
+| `yarn build:prod` | Type-checks and creates a production build. |
+| `yarn biome:lint:check` | Runs Biome lint without writing fixes. |
+| `yarn biome:format:check` | Checks Biome formatting without writing changes. |
 
 ## Environment
 
-The project uses Vite modes and `VITE_*` environment variables.
-
-Mode-specific files currently present:
+Base values live in `.env`. Mode-specific overrides live in:
 
 - `.env.dev`
+- `.env.stage`
 - `.env.prod`
-- `.env.test`
 
-Base variables are defined in `.env`.
+The project uses only the variables needed for the article demo:
 
 | Variable | Purpose |
 | --- | --- |
-| `VITE_DEFAULT_DESCRIPTION` | Default application description for metadata and PWA manifest. |
+| `VITE_DEFAULT_DESCRIPTION` | App description for HTML metadata and the PWA manifest. |
 | `VITE_DEFAULT_NAME` | Full application name. |
-| `VITE_DEFAULT_NAME_SHORT` | Short application name. |
-| `VITE_DEFAULT_THEME_COLOR` | Theme and background color used by the PWA manifest. |
-| `VITE_BASE_URL` | Main API base URL. |
-| `VITE_SOCKET_URL` | WebSocket URL. |
-| `VITE_CORE_URL` | Core domain value used by the app. |
-| `VITE_AVAILABILITY_COOKIE_NAME` | Cookie name used for auth availability checks. |
-| `VITE_NODE_ENV` | Runtime environment name used by application code. |
-| `VITE_QUERY_STALE_TIME` | Default TanStack Query stale time in milliseconds. |
-| `VITE_BUILD_INFO_EXPIRATION_TIME` | Build info expiration value used by environment configuration. |
-| `VITE_CACHE_VERSION_MAX_AGE_SECONDS` | Optional max age for the service worker build-info cache. |
+| `VITE_DEFAULT_NAME_SHORT` | Short application name and document title. |
+| `VITE_DEFAULT_THEME_COLOR` | Theme and background color in the PWA manifest. |
+| `VITE_NODE_ENV` | Runtime mode: `dev`, `stage`, or `prod`. |
+| `VITE_CACHE_VERSION_MAX_AGE_SECONDS` | Runtime cache TTL for `/build-info.txt`. |
 | `VITE_PORT` | Local Vite dev server port. |
-| `VITE_OUTPUT_DIR` | Build output directory. |
-| `VITE_APP_VERSION` | Application version exposed to the PWA service worker flow. |
+| `VITE_OUTPUT_DIR` | Build output directory, defaults to `build`. |
+| `VITE_APP_VERSION` | Current build version shown in the UI and written to `build-info.txt`. |
 
-## Project Structure
+`VITE_BASE_URL`, `VITE_SOCKET_URL`, and `VITE_CORE_URL` were removed on purpose. This demo has no backend API or WebSocket connection, so the service worker should not carry template-only API caching rules.
 
-```text
-src/
-  app.tsx                     Application provider tree
-  main.tsx                    React entry point and service worker bootstrap
-  classes/
-    class-sw/                 Service worker lifecycle helper
-  components/                 Shared UI components
-  contexts/                   React context providers and hooks
-  core/
-    consts/                   Shared constants
-    envs/                     Environment variable mapping
-    functions/                Shared utility functions
-    i18n/                     i18next setup
-    logger/                   Logging helper
-    query/                    TanStack Query client
-    router/                   TanStack Router setup
-    types/                    Shared TypeScript types
-  layouts/                    Root, router, public, private, and error layouts
-  pages/                      Public and private route pages
-```
+## Relation To The Article
 
-Public assets are stored in `public/`.
+The project follows the main pipeline from the article:
 
-Localization files are stored in:
+1. Vite creates a production build and generated service worker.
+2. `vite-sw.js` stays as the stable service worker filename.
+3. `registerType: 'prompt'` prevents silent page reloads.
+4. `ClassSw` receives `onNeedRefresh` from `virtual:pwa-register`.
+5. `ClassSw` reads `/build-info.txt` and stores the detected new version.
+6. `ProviderPWA` exposes the service worker state to React.
+7. The root layout either shows a manual action or calls `updateApp()` automatically.
+8. `updateSW(true)` activates the new service worker and reloads the page.
+
+The only intentional difference is the API cache example. The article shows a `NetworkOnly` API rule for apps with a backend. This repository has no API layer, so `runtimeCaching` contains only `/build-info.txt`.
+
+## Code Map
 
 ```text
-public/locales/en/translation.json
-public/locales/ru/translation.json
+src/main.tsx                         ClassSw singleton and initialization
+src/classes/class-sw/index.ts        service worker lifecycle helper
+src/contexts/context-pwa/            React provider and usePWA hook
+src/layouts/layout-root/layout.tsx   update UI and localStorage update mode
+vite.config.ts                       VitePWA config and pluginWriteBuildInfo setup
 ```
 
-Robots files are stored in `robots/`.
+The version file is generated by `@jenesei-software/jenesei-plugin-vite`:
 
-## Routing
+```ts
+pluginWriteBuildInfo({
+  pathBuildInfo: buildInfoPath,
+  version: VITE_APP_VERSION,
+  mode,
+});
+```
 
-Routing is configured with TanStack Router in `src/core/router/router.tsx`.
+## Testing Updates And Cache
 
-Current route groups:
+PWA updates must be tested against a production build. The service worker is disabled in development mode.
 
-- `/pu` for public routes
-- `/pu/home` for the public home page
-- `/pr` for private routes
-- `/pr/home` for the private home page
-
-The root route redirects unknown routes to the public route group. The public and private route groups redirect their base paths to their home pages.
-
-## Providers
-
-The app-level provider tree is defined in `src/app.tsx`.
-
-It includes:
-
-- screen width provider
-- language provider
-- error boundary layout
-- TanStack Query provider
-- permission provider
-- geolocation provider
-- dialog provider
-- PWA provider
-- router layout
-
-## Localization
-
-i18next is initialized in `src/core/i18n/index.ts`.
-
-The app supports language-only detection and loads translations from:
+Before the first test, clean old local service worker state in Chrome DevTools:
 
 ```text
-/locales/{{lng}}/{{ns}}.json
+Application -> Service workers -> Unregister
+Application -> Storage -> Clear site data
+Application -> Cache storage
 ```
 
-Supported languages are configured in `src/core/consts/index.ts`.
+Local test flow:
 
-When adding a language:
+1. Set the initial version in `.env`:
 
-1. Add the language metadata to `OBJECT_LANGUAGE`.
-2. Add a new translation file under `public/locales/<lng>/translation.json`.
-3. Keep translation keys aligned across all locale files.
-
-## PWA
-
-PWA support is configured in `vite.config.ts` through `vite-plugin-pwa`.
-
-The service worker helper is implemented in `src/classes/class-sw/index.ts` and exposed to React through `ProviderPWA`.
-
-Important behavior:
-
-- Service worker registration is enabled only when `env.mode === 'prod'`.
-- The app can detect offline readiness.
-- The app can detect available updates.
-- The app can reset service worker cache and reload from a clean state.
-- New app versions are read from `/build-info.txt` when an update is available.
-
-## Icons and Manifest
-
-Application icons are generated by `@jenesei-software/jenesei-plugin-vite`.
-
-Source logo:
-
-```text
-public/logos/logo-jenesei-id.png
+```env
+VITE_APP_VERSION=1.0.0
 ```
 
-Generated icons are written to:
-
-```text
-public/icons/
-```
-
-The generated icons are used in both `index.html` and the PWA manifest.
-
-## Robots
-
-`viteStaticCopy` copies the mode-specific robots file to `robots.txt` during build.
-
-Configured modes:
-
-| Mode | Source file | Meta robots |
-| --- | --- | --- |
-| `dev` | `robots/robots.dev.txt` | `noindex, nofollow` |
-| `stage` | `robots/robots.stage.txt` | `noindex, nofollow` |
-| `prod` | `robots/robots.prod.txt` | `index, follow` |
-
-Make sure every build mode has a matching robots file before using it in CI/CD.
-
-## Code Style
-
-Formatting and linting are handled by Biome.
-
-Key conventions:
-
-- TypeScript strict mode is enabled.
-- Imports are organized by Biome.
-- Use the `@local/*` alias for imports from `src`.
-- Keep code comments and in-code instructions in English.
-- Keep shared logic in `src/core`.
-- Keep route-level UI in `src/pages`.
-- Keep layout concerns in `src/layouts`.
-
-Before opening a pull request, run:
-
-```bash
-yarn biome:format
-yarn biome:lint:check
-yarn build:dev
-```
-
-## Build
-
-Create a production build:
+2. Build the app and start Vite preview:
 
 ```bash
 yarn build:prod
+npx vite preview --outDir build
 ```
 
-The output directory is controlled by `VITE_OUTPUT_DIR` and defaults to `build`.
+3. Open the URL printed by `vite preview`, usually `http://localhost:4173`.
+4. Confirm that the UI shows version `1.0.0`.
+5. Confirm that the service worker is registered:
 
-## Deployment Notes
+```text
+Application -> Service workers
+```
 
-- Provide all required `VITE_*` variables for the selected mode.
-- Ensure `robots.txt` behavior matches the target environment.
-- Ensure `VITE_APP_VERSION` is updated by the release process.
-- Publish or generate `/build-info.txt` if the PWA update prompt should display the new version.
-- Serve the built app as a single page application with fallback to `index.html`.
+6. Keep the app tab open and stop the preview server.
+7. Change the version in `.env`:
 
-## Troubleshooting
+```env
+VITE_APP_VERSION=1.0.1
+```
 
-If the app starts on an unexpected port, check `VITE_PORT`.
+8. Build and start preview again on the same port:
 
-If a build fails while copying `robots.txt`, verify that the selected Vite mode has a matching file in `robots/`.
+```bash
+yarn build:prod
+npx vite preview --outDir build
+```
 
-If PWA updates do not appear locally, remember that service worker registration is enabled only for `prod` mode.
+9. Go back to the old app tab and reload it, or navigate inside the app, so the browser checks the service worker.
+10. In `Manual` mode, the `Update version` button should become enabled.
+11. Click `Update version`. The new service worker activates, the page reloads, and the UI should show `1.0.1`.
+12. In `Automatic` mode, the app calls `updateApp()` as soon as `onNeedRefresh` reports a new version.
 
-If translations do not load, check the language code in `OBJECT_LANGUAGE` and make sure the matching file exists in `public/locales/<lng>/translation.json`.
+After `yarn build:prod`, the version file is generated here:
+
+```text
+build/build-info.txt
+```
+
+It should be available at:
+
+```text
+http://localhost:4173/build-info.txt
+```
+
+In Cache Storage, you can inspect the Workbox precache and the `version-cache` runtime cache after `/build-info.txt` has been requested.
+
+## If Updates Do Not Appear
+
+- Make sure the app is opened from `vite preview`, not `yarn start`.
+- Make sure `.env.prod` contains `VITE_NODE_ENV=prod`.
+- Make sure the tab is not using hard refresh with cache disabled.
+- Open `Application -> Service workers` and check that the page has a controller.
+- Open `/build-info.txt` and confirm that it contains the new version.
+- Click `Reset cache` if the browser gets stuck between builds.
+
+## Important Rules
+
+- Do not rename `vite-sw.js` after the first production release without a migration plan.
+- Do not edit `build/` manually; it is generated output.
+- After PWA config changes, verify a production build, the service worker, and Cache Storage.
+- For this demo, changing `VITE_APP_VERSION` is enough because the version is embedded into the JS bundle and written to `build-info.txt`.
+
+## Validation
+
+```bash
+yarn biome:lint:check
+yarn build:dev
+```

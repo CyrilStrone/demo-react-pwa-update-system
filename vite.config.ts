@@ -1,4 +1,4 @@
-import { generateManifestIcons, pluginUpdateIcons } from '@jenesei-software/jenesei-plugin-vite';
+import { generateManifestIcons, pluginUpdateIcons, pluginWriteBuildInfo } from '@jenesei-software/jenesei-plugin-vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig, loadEnv } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
@@ -15,7 +15,8 @@ export default defineConfig(({ mode }) => {
   const VITE_DEFAULT_NAME_SHORT = env.VITE_DEFAULT_NAME_SHORT;
   const VITE_DEFAULT_THEME_COLOR = env.VITE_DEFAULT_THEME_COLOR;
   const VITE_DEFAULT_DESCRIPTION = env.VITE_DEFAULT_DESCRIPTION;
-  const VITE_BASE_URL = env.VITE_BASE_URL;
+  const VITE_OUTPUT_DIR = env.VITE_OUTPUT_DIR || 'build';
+  const VITE_APP_VERSION = env.VITE_APP_VERSION || 'unknown';
 
   const robotsMode = {
     prod: {
@@ -36,6 +37,7 @@ export default defineConfig(({ mode }) => {
   const sizesBackgroundTransparent = [57, 64, 72, 76, 114, 120, 144, 152, 180, 192, 256, 384, 512];
   const sizesBackgroundWhite: never[] = [];
   const sizesFavicon = [64];
+  const buildInfoPath = path.resolve(__dirname, VITE_OUTPUT_DIR, 'build-info.txt');
 
   return {
     server: {
@@ -43,7 +45,7 @@ export default defineConfig(({ mode }) => {
       port: env.VITE_PORT ? parseInt(env.VITE_PORT, 10) : 3000,
     },
     build: {
-      outDir: env.VITE_OUTPUT_DIR || 'build',
+      outDir: VITE_OUTPUT_DIR,
     },
     resolve: {
       alias: {
@@ -91,7 +93,7 @@ export default defineConfig(({ mode }) => {
       }),
       react(),
       VitePWA({
-        filename: 'vite-sw.js', //!!! НИКОГДА НЕ МЕНЯТЬ !!!
+        filename: 'vite-sw.js', // Keep this filename stable after the first production release.
         strategies: 'generateSW',
         registerType: 'prompt',
         includeManifestIcons: false,
@@ -100,10 +102,6 @@ export default defineConfig(({ mode }) => {
           globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,json}'],
           cleanupOutdatedCaches: true,
           runtimeCaching: [
-            {
-              urlPattern: new RegExp(`^${VITE_BASE_URL}/.*$`),
-              handler: 'NetworkOnly',
-            },
             {
               urlPattern: /build-info\.txt$/,
               handler: 'NetworkFirst',
@@ -139,6 +137,11 @@ export default defineConfig(({ mode }) => {
             sizesFavicon: sizesFavicon,
           }),
         },
+      }),
+      pluginWriteBuildInfo({
+        pathBuildInfo: buildInfoPath,
+        version: VITE_APP_VERSION,
+        mode,
       }),
     ],
   };

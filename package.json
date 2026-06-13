@@ -1,11 +1,11 @@
 {
-  "name": "jenesei-template-project-react",
+  "name": "demo-react-pwa-update-system-from-scratch",
   "private": true,
   "version": "0.0.1",
   "type": "module",
   "scripts": {
     "biome:lint": "biome lint src",
-    "biome:lint:check": "biome lint src --no-fix",
+    "biome:lint:check": "biome lint src",
     "biome:format": "biome format --write src",
     "biome:format:check": "biome format src",
     "changelog": "conventional-changelog -p eslint -i CHANGELOG.md -s -r 0",
@@ -21,7 +21,7 @@
   "dependencies": {
     "@fontsource/inter": "^5.2.8",
     "@jenesei-software/jenesei-kit-react": "^2.2.1",
-    "@jenesei-software/jenesei-plugin-vite": "^2.5.0",
+    "@jenesei-software/jenesei-plugin-vite": "2.7.0",
     "@tanstack/react-router": "^1.120.5",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -30,7 +30,7 @@
   "devDependencies": {
     "@biomejs/biome": "^2.3.12",
     "@jenesei-software/jenesei-kit-react": "^2.2.1",
-    "@jenesei-software/jenesei-plugin-vite": "^2.5.0",
+    "@jenesei-software/jenesei-plugin-vite": "^2.7.0",
     "@tanstack/react-router-devtools": "^1.166.13",
     "@types/node": "^22.8.2",
     "@types/react": "^19.0.0",

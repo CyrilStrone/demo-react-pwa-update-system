@@ -10,17 +10,17 @@ import { ProviderScreenWidth } from '@jenesei-software/jenesei-kit-react/context
 function App() {
   return (
     <ProviderScreenWidth>
-        <LayoutErrorBoundary>
-            <ProviderPermission>
-              <ProviderGeolocation>
-                <ProviderDialog zIndex={1000}>
-                  <ProviderPWA>
-                    <LayoutRouter />
-                  </ProviderPWA>
-                </ProviderDialog>
-              </ProviderGeolocation>
-            </ProviderPermission>
-        </LayoutErrorBoundary>
+      <LayoutErrorBoundary>
+        <ProviderPermission>
+          <ProviderGeolocation>
+            <ProviderDialog zIndex={1000}>
+              <ProviderPWA>
+                <LayoutRouter />
+              </ProviderPWA>
+            </ProviderDialog>
+          </ProviderGeolocation>
+        </ProviderPermission>
+      </LayoutErrorBoundary>
     </ProviderScreenWidth>
   );
 }
